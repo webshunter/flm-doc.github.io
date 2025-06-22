@@ -30,6 +30,11 @@
     "file": "api_development.md"
   },
   {
+    "label": "Module Documentation",
+    "icon": "fa-puzzle-piece",
+    "file": "module_documentation.md"
+  },
+  {
     "label": "Best Practices",
     "icon": "fa-star",
     "file": "best_practices.md"
