@@ -1,0 +1,42 @@
+[
+  {
+    "label": "Overview",
+    "icon": "fa-home",
+    "file": "INDEX.md"
+  },
+  {
+    "label": "Documentation",
+    "icon": "fa-book",
+    "file": "README.md"
+  },
+  {
+    "label": "Implementation Steps",
+    "icon": "fa-play",
+    "file": "implementation_steps.md"
+  },
+  {
+    "label": "Routing System",
+    "icon": "fa-route",
+    "file": "routing_system.md"
+  },
+  {
+    "label": "CRUD Implementation",
+    "icon": "fa-database",
+    "file": "crud_implementation.md"
+  },
+  {
+    "label": "API Development",
+    "icon": "fa-code",
+    "file": "api_development.md"
+  },
+  {
+    "label": "Best Practices",
+    "icon": "fa-star",
+    "file": "best_practices.md"
+  },
+  {
+    "label": "Troubleshooting",
+    "icon": "fa-tools",
+    "file": "troubleshooting.md"
+  }
+] 
