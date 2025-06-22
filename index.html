@@ -446,7 +446,13 @@
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             loadMenu();
-            loadContent(config.defaultFile);
+            
+            // Check for URL parameters on initial load
+            const url = new URL(window.location);
+            const fileParam = url.searchParams.get('file');
+            const initialFile = fileParam || config.defaultFile;
+            
+            loadContent(initialFile);
             setupMobileToggle();
         });
 
@@ -481,10 +487,13 @@
                 });
             });
 
-            // Set default active
-            const defaultLink = navMenu.querySelector(`[data-file="${config.defaultFile}"]`);
-            if (defaultLink) {
-                setActiveNav(defaultLink);
+            // Set active based on current URL parameter
+            const url = new URL(window.location);
+            const fileParam = url.searchParams.get('file');
+            const currentFile = fileParam || config.defaultFile;
+            const activeLink = navMenu.querySelector(`[data-file="${currentFile}"]`);
+            if (activeLink) {
+                setActiveNav(activeLink);
             }
         }
 
@@ -589,13 +598,6 @@
                 setActiveNav(link);
             }
         });
-
-        // Handle initial URL parameters
-        const url = new URL(window.location);
-        const fileParam = url.searchParams.get('file');
-        if (fileParam) {
-            currentFile = fileParam;
-        }
 
         // Keyboard shortcuts
         document.addEventListener('keydown', function(e) {
