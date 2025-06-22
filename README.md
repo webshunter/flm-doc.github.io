@@ -11,6 +11,11 @@
 8. [API Development](#api-development)
 9. [Best Practices](#best-practices)
 10. [Troubleshooting](#troubleshooting)
+11. [MySQL Functions](#mysql-functions)
+12. [Route Dependencies](#route-dependencies)
+13. [Dashboard Updates](#dashboard-updates)
+14. [OOP Class Standards](#oop-class-standards)
+15. [Blade Script Standards](#blade-script-standards)
 
 ## 🎯 Pendahuluan
 
@@ -519,3 +524,263 @@ class NamaHelper {
 ## 🎯 Kesimpulan
 
 FLM Builder adalah sistem yang powerful untuk membangun aplikasi web modern dengan arsitektur yang modular dan fleksibel. Dokumentasi ini mencakup semua aspek yang diperlukan untuk development, maintenance, dan troubleshooting sistem. 
+
+## 🗄️ MySQL Functions
+
+### 1. nama_majikan Function
+```sql
+DELIMITER $$
+
+CREATE FUNCTION nama_majikan(p_id_biodata VARCHAR(50))
+RETURNS VARCHAR(255)
+DETERMINISTIC
+BEGIN
+    DECLARE v_namamajikan VARCHAR(255);
+
+    SELECT IFNULL(NULLIF(NULLIF(m.namamajikan, ''), '0'), d.nama)
+    INTO v_namamajikan
+    FROM majikan m
+    LEFT JOIN datamajikan d ON m.kode_majikan = d.id_majikan
+    WHERE m.id_biodata = p_id_biodata
+    LIMIT 1;
+
+    RETURN v_namamajikan;
+END$$
+
+DELIMITER ;
+```
+
+#### Function Description:
+- **Purpose**: Retrieves the employer's name (nama majikan) based on biodata ID with fallback logic
+- **Parameter**: 
+  - `p_id_biodata` (VARCHAR(50)): The biodata ID to look up
+- **Return**: VARCHAR(255) - The employer's name
+- **Logic Flow**:
+  1. First checks `m.namamajikan` from majikan table
+  2. If empty or '0', falls back to `d.nama` from datamajikan table
+  3. Uses LEFT JOIN to ensure all records are returned even without matching datamajikan
+- **Usage**: 
+  ```sql
+  SELECT nama_majikan('BIODATA123'); -- Returns employer name for biodata ID 'BIODATA123'
+  ```
+- **Notes**:
+  - Function is DETERMINISTIC (always returns same result for same input)
+  - Uses IFNULL and NULLIF for fallback logic
+  - Joins majikan and datamajikan tables
+  - Returns NULL if no matching record found
+  - Used in various queries to get employer information
+  - Handles empty strings and '0' values as NULL
+
+## 🔗 Route Dependencies
+
+### Standar Dependensi Route
+Setiap route di folder web/api/flamboyan harus selalu menambahkan dependensi berikut:
+```php
+->use('vendor/autoload.php')
+->use('module/db.php')
+->use('module/secondb.php')
+->use('module/perusahaan.php')
+->middleware('cekloginadmin');
+```
+
+### Contoh Penggunaan
+```php
+$route->add('/flamboyan/example/{param}', function($param) {
+    // Route logic here
+    View::render('flamboyan/example', $data);
+})
+->use('vendor/autoload.php')
+->use('module/db.php')
+->use('module/secondb.php')
+->use('module/perusahaan.php')
+->middleware('cekloginadmin');
+```
+
+### Catatan Penting
+1. Pastikan untuk selalu menambahkan dependensi ini di setiap route baru yang dibuat
+2. Dependensi ini diperlukan untuk:
+   - Autoloading class dan dependencies (vendor/autoload.php)
+   - Koneksi database utama (module/db.php)
+   - Koneksi database sekunder (module/secondb.php)
+   - Data perusahaan (module/perusahaan.php)
+   - Pengecekan login admin (middleware cekloginadmin)
+3. Urutan dependensi harus sesuai seperti di atas
+4. Jangan menghapus atau mengubah urutan dependensi yang sudah ada
+
+## 📊 Dashboard Updates
+
+### Dashboard Baru
+Dashboard telah diperbarui dengan mengacu pada aplikasi Flamboyan yang ada. Fitur-fitur yang ditambahkan:
+
+1. **Statistik TKI per Sektor:**
+   - Male Formal (MF)
+   - Male Informal (MI) 
+   - Female Formal (FF)
+   - Female Informal (FI)
+   - Panti Jompo (JP)
+
+2. **Data Detail per Sektor:**
+   - Total data per sektor
+   - Jumlah yang sudah terbang
+   - Jumlah MD/UNFIT (Mengundurkan Diri/UNFIT)
+
+3. **Chart Visualisasi:**
+   - Pie chart untuk persentase data TKI keseluruhan
+   - Donut chart untuk persentase data TKI per sponsor
+
+4. **Tabel Data Terbaru:**
+   - Data majikan terbaru
+   - Data passport terbaru
+   - Data terbang terbaru
+   - Data MD/UNFIT terbaru
+
+### Route yang Ditambahkan
+```php
+// Dashboard utama dengan data statistik
+$route->add('/admin/dashboard', function() {
+    // Query data statistik TKI
+    // Render view dashboard_flamboyan
+})
+->use('vendor/autoload.php')
+->use('module/db.php')
+->use('module/secondb.php')
+->use('module/perusahaan.php')
+->middleware('cekloginadmin');
+
+// Route AJAX untuk data terbaru
+$route->add('/admin/dashboard/majikan-terbaru', function() {
+    // Return data majikan terbaru dalam format JSON
+});
+
+$route->add('/admin/dashboard/passport-terbaru', function() {
+    // Return data passport terbaru dalam format JSON
+});
+
+$route->add('/admin/dashboard/terbang-terbaru', function() {
+    // Return data terbang terbaru dalam format JSON
+});
+
+$route->add('/admin/dashboard/md-unfit-terbaru', function() {
+    // Return data MD/UNFIT terbaru dalam format JSON
+});
+```
+
+### View yang Dibuat
+- `views/admin/dashboard_flamboyan.blade.php` - View dashboard utama dengan statistik dan chart
+
+### Database yang Digunakan
+- Menggunakan `SECOND_DB` untuk query data TKI
+- Tabel utama: `personal`, `majikan`, `paspor`, `visa`, `datasponsor`
+- Filter berdasarkan `id_biodata` dengan prefix sektor (MF-, MI-, FF-, FI-, JP-)
+
+### Catatan Implementasi
+1. Semua route menggunakan dependensi standar Flamboyan
+2. Data diambil secara real-time dari database
+3. Chart menggunakan library ECharts
+4. Tabel menggunakan DataTables dengan AJAX
+5. Responsive design untuk berbagai ukuran layar
+
+## 🏗️ OOP Class Standards
+
+### Standar Baru: Module/Helper Wajib OOP Class
+
+1. **Semua module/helper di folder `module/` harus berupa class** (menggunakan namespace `NN\Module`).
+2. **Fungsi utility** (seperti UUID, PhotoHelper, dsb) harus menggunakan static function.
+3. **Contoh struktur class helper:**
+
+```php
+namespace NN\Module;
+class NamaHelper {
+    public static function fungsiStatic(...) { ... }
+}
+```
+
+4. **Cara penggunaan di route/file lain:**
+   - Tambahkan di atas file:
+     ```php
+     use NN\Module\NamaHelper;
+     ```
+   - Panggil dengan:
+     ```php
+     NamaHelper::fungsiStatic(...);
+     ```
+   - Pastikan file module di-load dengan:
+     ```php
+     ->use('module/nama_helper.php')
+     ```
+
+5. **Tidak boleh lagi menggunakan function procedural global** di module/helper.
+6. **Keuntungan:**
+   - Tidak ada error redeclare
+   - Lebih mudah autoload
+   - Konsisten dengan best practice OOP PHP
+
+## 📝 Blade Script Standards
+
+### Standar Pemanggilan Script di Blade
+- Semua pemanggilan script (termasuk View::jsm(...)) harus selalu berada di dalam @section('script') pada file Blade.
+- Hindari penggunaan <script src=...> manual dan juga @push('js') untuk script utama modul.
+- Contoh yang benar:
+
+```php
+@section('script')
+    {!! View::jsm('path/to/script.js') !!}
+@endsection
+```
+
+- Jika ada style tambahan:
+
+```php
+@section('script')
+    <style>
+        /* custom style */
+    </style>
+    {!! View::jsm('path/to/script.js') !!}
+@endsection
+```
+
+### Standar Komunikasi Data Blade ke JS
+- Untuk komunikasi data antara Blade dan JS (misal id_biodata), gunakan variabel global seperti `app_id_biodata` yang di-set di JS dari Blade.
+- Jangan gunakan `{id_biodata}` di dalam file JS, karena JS di-load secara noscript/dinamis dan tidak bisa akses variabel Blade secara langsung.
+- Pastikan variabel global di-set sebelum script JS utama di-load.
+
+### Standar Penentuan & Penampilan Foto di Template Detail
+- Untuk setiap template detail yang membutuhkan foto profil, gunakan logic penentuan foto seperti di temp2/detailpersonal:
+    - Jika photo_path ada, gunakan PATH/photo_path
+    - Jika tidak, fallback ke assets/uploads/default-user.png
+- Bungkus <img> dengan <a class='profile-pic'> untuk konsistensi dan kemudahan pengembangan fitur upload/modal.
+- Standar ini wajib diikuti saat membuat config/template baru.
+
+## 🔧 Special Notes
+
+### Catatan Khusus: singleData pada family.js
+- Pada file `script/flamboyan/admin/family.js` terdapat konfigurasi `singleData: true` pada loadCRUD.
+- Artinya: **halaman ini hanya mengatur dan menampilkan satu data saja (single record) untuk setiap id_biodata, bukan list banyak data**.
+- Efek di CRUD:
+  - Tidak ada tabel list, hanya tampilan detail satu data (atau form tambah jika belum ada).
+  - Tombol yang muncul hanya "Tambah Data" (jika belum ada) atau "Update Data" (jika sudah ada).
+  - Query otomatis LIMIT 1 dan hanya mengambil satu baris data.
+- Cocok untuk data yang memang hanya boleh satu per parent (misal: data keluarga per biodata).
+- Implementasi ini berbeda dengan mode default CRUD yang menampilkan banyak baris data dalam tabel.
+
+### Query Template Notes (CRUD JS)
+- Pada file-file CRUD JS (misal: script/flamboyan/admin/pengalaman.js), terdapat pola penulisan query SQL pada properti `queryTemp` seperti berikut:
+  
+  ```js
+  queryTemp: "SELECT {select} FROM pengalaman WHERE id_biodata = '" + (_id('app_id_biodata').innerText)+"' || ORDER BY id_pengalaman DESC",
+  ```
+- **Catatan penting:**
+  - Selalu ada tanda `||` sebelum `ORDER BY` di query.
+  - Tanda `||` ini tidak umum dalam SQL standar. Di beberapa database, `||` adalah operator konkatenasi string, namun di MySQL biasanya menggunakan `CONCAT()` atau `+`.
+  - Jika query ini dijalankan di MySQL, `||` akan dianggap sebagai operator logika OR, sehingga query menjadi:
+    ```sql
+    SELECT ... FROM pengalaman WHERE id_biodata = '...' || ORDER BY id_pengalaman DESC
+    ```
+    Ini bisa menyebabkan error atau hasil tidak diharapkan.
+  - Kemungkinan besar, tanda `||` ini digunakan sebagai placeholder yang akan diproses/diganti di backend sebelum query dieksekusi.
+- **Saran:**
+  - Pastikan ada proses penggantian/parse di backend untuk menghilangkan atau mengganti `||` sebelum query dijalankan ke database.
+  - Jika tidak ada proses tersebut, pertimbangkan untuk memperbaiki query agar sesuai standar SQL.
+- **Kesimpulan:**
+  - Tanda `||` sebelum `ORDER BY` adalah pola konsisten di file CRUD JS.
+  - Dokumentasikan alasan penggunaan tanda ini agar tidak membingungkan developer lain. 

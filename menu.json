@@ -2,7 +2,7 @@
   {
     "label": "Overview",
     "icon": "fa-home",
-    "file": "INDEX.md"
+    "file": "README.md"
   },
   {
     "label": "Documentation",
@@ -38,5 +38,35 @@
     "label": "Troubleshooting",
     "icon": "fa-tools",
     "file": "troubleshooting.md"
+  },
+  {
+    "label": "MySQL Functions",
+    "icon": "fa-database",
+    "file": "mysql_functions.md"
+  },
+  {
+    "label": "Route Dependencies",
+    "icon": "fa-route",
+    "file": "route_dependencies.md"
+  },
+  {
+    "label": "Dashboard Updates",
+    "icon": "fa-chart-bar",
+    "file": "dashboard_updates.md"
+  },
+  {
+    "label": "OOP Class Standards",
+    "icon": "fa-code",
+    "file": "oop_standards.md"
+  },
+  {
+    "label": "Blade Script Standards",
+    "icon": "fa-file-code",
+    "file": "blade_standards.md"
+  },
+  {
+    "label": "Special Notes",
+    "icon": "fa-sticky-note",
+    "file": "special_notes.md"
   }
 ] 
