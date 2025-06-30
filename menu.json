@@ -35,6 +35,16 @@
     "file": "module_documentation.md"
   },
   {
+    "label": "Template Documentation",
+    "icon": "fa-file-word",
+    "file": "template_summary.md"
+  },
+  {
+    "label": "Cong Yi Template",
+    "icon": "fa-file-alt",
+    "file": "congyi_template_documentation.md"
+  },
+  {
     "label": "Best Practices",
     "icon": "fa-star",
     "file": "best_practices.md"
