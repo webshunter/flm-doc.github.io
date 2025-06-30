@@ -61,14 +61,22 @@ FLM Builder adalah sistem modern untuk membangun aplikasi web dengan arsitektur 
    - API Best Practices
    - Testing API Endpoints
 
-### 6. **Best Practices** - Praktik terbaik
+### 6. **Template Documentation** - Dokumentasi template dokumen
+   - **Cong Yi Template** - Template DOCX untuk biodata TKI Taiwan
+     - Placeholder Reference (100+ placeholders)
+     - Dynamic Content & Table Cloning
+     - Image Handling & Processing
+     - Implementation Guide
+     - Best Practices & Troubleshooting
+
+### 7. **Best Practices** - Praktik terbaik
    - Configuration
    - Performance
    - Security
    - User Experience
    - Code Organization
 
-### 7. **Troubleshooting** - Pemecahan masalah
+### 8. **Troubleshooting** - Pemecahan masalah
    - Common Issues & Solutions
    - Testing Checklist
    - Debug Tools
